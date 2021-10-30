@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class TaskController extends Controller
 {
     public function index() {
-        $result = Task::where('user_id', auth()->user()->id)
+        $result = Task::with(['user'])
             ->get();
 
         return response()->json($result, 200);
@@ -31,7 +31,6 @@ class TaskController extends Controller
 
     public function show($id) {
         $result = Task::where('id', $id)
-            ->where('user_id', auth()->user()->id)
             ->first();
 
         if(!$result) {
