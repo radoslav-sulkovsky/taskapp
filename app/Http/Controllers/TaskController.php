@@ -9,6 +9,7 @@ class TaskController extends Controller
 {
     public function index() {
         $result = Task::with(['user'])
+            ->orderBy('created_at', 'desc')
             ->get();
 
         return response()->json($result, 200);
@@ -26,11 +27,12 @@ class TaskController extends Controller
             'description' => $request->description,
         ]);
 
-        return response()->json($result, 201);
+        return response()->json($result->load('user'), 201);
     }
 
     public function show($id) {
-        $result = Task::where('id', $id)
+        $result = Task::with(['user'])
+            ->where('id', $id)
             ->first();
 
         if(!$result) {
