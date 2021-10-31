@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +13,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->group(function() {
+    Route::get('/user', [\App\Http\Controllers\AuthController::class, 'user']);
+    Route::get('/logout', [App\Http\Controllers\AuthController::class, 'logout']);
+
+    Route::get('/tasks', [App\Http\Controllers\TaskController::class, 'index']);
+    Route::get('/tasks/{id}', [App\Http\Controllers\TaskController::class, 'show']);
+    Route::post('/tasks', [App\Http\Controllers\TaskController::class, 'store']);
+    Route::delete('/tasks/{id}', [App\Http\Controllers\TaskController::class, 'destroy']);
 });
+
+Route::post('/login', [App\Http\Controllers\AuthController::class, 'login']);
