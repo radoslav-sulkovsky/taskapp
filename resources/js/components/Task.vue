@@ -1,92 +1,41 @@
 <template>
-    <v-app>
-        <v-main>
-            <v-container>
-                <v-row justify="center" class="mx-5">
-                    <v-col xs="12" sm="8">
-                        <v-btn class="float-right" color="secondary" @click="logout">Logout</v-btn>
-                    </v-col>
-                </v-row>
-                <v-row justify="center" class="ma-5">
-                    <v-col xs="12" sm="8">
-                        <v-container class="text-h6">
-                            Task list
-                        </v-container>
-                        <v-list>
-                            <v-list-item-group>
-                                <v-list-item v-for="(task) in tasks" :key="task.id" @click="showTask(task.id)">
-                                    <v-list-item-content>
-                                        <v-list-item-title>
-                                            {{ task.title }}
-                                        </v-list-item-title>
-                                        <v-list-item-subtitle>
-                                            by {{ task.user.name }} at {{ moment(task.created_at).format('YYYY-MM-DD') }}
-                                        </v-list-item-subtitle>
-                                    </v-list-item-content>
-                                </v-list-item>
-                            </v-list-item-group>
-                        </v-list>
-                    </v-col>
-                </v-row>
-                <v-row justify="center" class="ma-5">
-                    <v-col xs="12" sm="8">
-                        <v-dialog
-                            v-model="dialogAddTask"
-                            persistent
-                            max-width="300px">
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-btn
-                                    v-bind="attrs"
-                                    v-on="on"
-                                    color="success">Add new</v-btn>
-                            </template>
-
-                            <v-card>
-                                <v-card-title>
-                                    <span class="text-h6">Add new task</span>
-                                </v-card-title>
-                                <v-card-text>
-                                    <v-container>
-                                        <v-row>
-                                            <v-col>
-                                                <v-form ref="form">
-                                                    <v-text-field
-                                                        v-model="task.title"
-                                                        :rules="validation.title"
-                                                        label="Title">
-                                                    </v-text-field>
-                                                    <v-textarea
-                                                        v-model="task.description"
-                                                        :rules="validation.description"
-                                                        label="Description">
-                                                    </v-textarea>
-                                                </v-form>
-                                            </v-col>
-                                        </v-row>
-                                    </v-container>
-                                </v-card-text>
-                                <v-card-actions>
-                                    <v-spacer></v-spacer>
-                                    <v-btn
-                                        @click="dialogAddTask = false"
-                                        color="blue"
-                                        text>
-                                        Close
-                                    </v-btn>
-                                    <v-btn
-                                        @click="addTask"
-                                        color="green"
-                                        text>
-                                        Add
-                                    </v-btn>
-                                </v-card-actions>
-                            </v-card>
-                        </v-dialog>
-                    </v-col>
-                </v-row>
-            </v-container>
-        </v-main>
-    </v-app>
+    <div class="container">
+        <div class="tasks">
+            <div class="tasks-content">
+                <div class="tasks-list">
+                    <div class="task" v-for="task in tasks" :key="task.id" @click="showTask(task.id)">
+                        <div class="task-title">
+                            {{ task.title }}
+                        </div>
+                        <div class="task-info">
+                            by {{ task.user.name }} at {{ moment(task.created_at).format('YYYY-MM-DD') }}
+                        </div>
+                    </div>
+                </div>
+                <div class="tasks-footer">
+                    <button class="button" @click="openModal">Add new</button>
+                </div>
+            </div>
+        </div>
+        <div class="modal" ref="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="pull-right">
+                        <span class="close-button" @click="closeModal"></span>
+                    </span>
+                </div>
+                <div class="modal-body">
+                    <form class="form">
+                        <label for="title">Title</label>
+                        <input type="text" name="title" v-model="task.title">
+                        <label for="description">Description</label>
+                        <textarea name="description" v-model="task.description" rows="3"></textarea>
+                        <button class="button" @click="addTask">Create</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -96,19 +45,10 @@ export default {
     data() {
         return {
             moment: moment,
-            dialogAddTask: false,
             task: {
                 title: '',
                 description: '',
             },
-            validation: {
-                title: [
-                    v => !!v || 'Title is required',
-                ],
-                description: [
-                    v => !!v || 'Description is required',
-                ],
-            }
         }
     },
     mounted() {
@@ -128,37 +68,29 @@ export default {
         getTasks() {
             this.$store.dispatch('task/getTasks');
         },
+        openModal() {
+            this.$refs.modal.style.display = 'block';
+        },
+        showTask(id) {
+            this.$router.push(`/${id}`);
+        },
+        closeModal() {
+            this.$refs.modal.style.display = 'none';
+        },
         addTask() {
-            let validate = this.$refs.form.validate();
-
-            if(!validate) {
-                return;
-            }
-
             this.$store.dispatch('task/addTask', {
                 title: this.task.title,
                 description: this.task.description,
             }).then(() => {
-                this.dialogAddTask = false;
-
+                this.closeModal();
                 this.task.title = '';
                 this.task.description = '';
             });
         },
-        showTask(id) {
-            this.$router.push(`/${id}`);
-        }
     }
 }
 </script>
 
 <style scoped>
-    .v-list {
-        height: 50vh;
-        overflow-y: auto;
-    }
 
-    .v-list-item__content:hover > .v-list-item__title {
-        text-decoration: underline;
-    }
 </style>
