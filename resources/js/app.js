@@ -1,7 +1,7 @@
 import Vue from "vue";
 import store from "./store";
 import router from "./router";
-import vuetify from "./plugins/vuetify";
+// import vuetify from "./plugins/vuetify";
 import axios from "axios";
 
 import App from "./components/App.vue"
@@ -14,7 +14,7 @@ const app = new Vue({
     components: {
         App
     },
-    vuetify,
+    // vuetify,
     store,
     router,
     el: '#app'
