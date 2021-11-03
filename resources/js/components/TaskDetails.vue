@@ -1,25 +1,23 @@
 <template>
-    <v-app>
-        <v-main>
-            <v-container>
-                <v-row justify="center" class="ma-5">
-                    <v-col xs="12" sm="8">
-                        <v-card>
-                            <v-card-title>
-                                <span class="text-h6">{{ task.title }}</span>
-                            </v-card-title>
-                            <v-card-subtitle>
-                                <span class="text-subtitle-1">by {{ task.user.name }} at {{ moment(task.created_at).format('YYYY-MM-DD') }}</span>
-                            </v-card-subtitle>
-                            <v-card-text>
-                                {{ task.description }}
-                            </v-card-text>
-                        </v-card>
-                    </v-col>
-                </v-row>
-            </v-container>
-        </v-main>
-    </v-app>
+    <div class="container">
+        <div class="tasks">
+            <div class="tasks-content">
+                <div class="tasks-list">
+                    <div class="task">
+                        <div class="task-title">
+                            {{ task.title }}
+                        </div>
+                        <div class="task-info">
+                            by {{ task.user.name }} at {{ moment(task.created_at).format('YYYY-MM-DD') }}
+                        </div>
+                        <div class="task-description">
+                            {{ task.description }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
